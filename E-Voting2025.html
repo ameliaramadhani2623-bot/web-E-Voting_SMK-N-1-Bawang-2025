@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>E-Voting OSIS SMK N 1 Bawang Banjarnegara 2025</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+  :root {
+    --blue: #0d47a1;
+    --red: #d32f2f;
+    --gold: #fbc02d;
+    --card: #f9f9fb;
+  }
+
+  /* === Background Sekolah Transparan === */
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background: url('begron.webp') center/cover fixed no-repeat;
+    color: #111;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    animation: fadeBody 1.2s ease both;
+  }
+
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(3px);
+    z-index: 0;
+  }
+
+  /* === Animasi Muncul Lembut === */
+  @keyframes fadeBody {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .overlay {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    animation: fadeOverlay 1.3s ease both;
+  }
+
+  @keyframes fadeOverlay {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* === Tampilan Umum === */
+  .wrap {
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    animation: cardZoom 1s ease both;
+  }
+
+  @keyframes cardZoom {
+    0% {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  header {
+    background: linear-gradient(90deg, var(--blue), var(--red));
+    color: #fff;
+    padding: 22px;
+    text-align: center;
+    border-bottom: 6px solid var(--gold);
+  }
+
+  .logo {
+    width: 88px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 8px;
+    animation: rotateLogo 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes rotateLogo {
+    0% { transform: rotate(0deg) scale(1); }
+    100% { transform: rotate(5deg) scale(1.05); }
+  }
+
+  main {
+    padding: 20px;
+  }
+
+  .page {
+    display: none;
+    animation: fadeIn 0.35s ease both;
+  }
+
+  .active {
+    display: block;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #cfcfd4;
+    margin: 8px 0 12px;
+    font-size: 14px;
+  }
+
+  textarea {
+    min-height: 90px;
+    resize: vertical;
+  }
+
+  button {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-weight: 600;
+  }
+
+  button:hover {
+    transform: translateY(-3px);
+    background: var(--red);
+  }
+
+  .candidate {
+    display: flex;
+    gap: 16px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 14px;
+    align-items: flex-start;
+    box-shadow: 0 6px 14px rgba(13, 71, 161, 0.06);
+    margin-bottom: 14px;
+    transition: transform 0.18s;
+  }
+
+  .candidate:hover {
+    transform: translateY(-6px);
+  }
+
+  .candidate img {
+    width: 190px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .cand-body {
+    flex: 1;
+    text-align: left;
+  }
+
+  .cand-title {
+    color: var(--blue);
+    font-weight: 700;
+    margin: 2px 0 8px;
+  }
+
+  .cand-vision {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  .cand-mission {
+    margin: 0;
+    padding-left: 18px;
+    color: #222;
+  }
+
+  .small {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .admin-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .admin-panel {
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+
+  .progress-bar {
+    height: 16px;
+    background: #e9e9ee;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--red));
+    width: 0%;
+    text-align: right;
+    color: #fff;
+    padding-right: 8px;
+    font-size: 12px;
+  }
+
+  .chart-wrap {
+    max-width: 900px;
+    margin: 10px auto;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .candidate {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .cand-body {
+      text-align: center;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <div class="overlay">
+    <div class="wrap">
+      <header>
+        <img src="smk.png" alt="Logo SMK" class="logo" />
+        <h1>E-Voting Ketua & Wakil OSIS</h1>
+        <div style="margin-top:6px;font-weight:600;">SMK N 1 Bawang Banjarnegara - 2025</div>
+      </header>
+
+      <main>
+       <section id="loginPage" class="page active">
+          <h2>Login Siswa</h2>
+          <p class="muted">Masukan nama dan password yang diberikan panitia</p>
+          <input id="nama" type="text" placeholder="Nama Lengkap" />
+          <input id="password" type="password" placeholder="Password" />
+          <div class="row">
+            <button onclick="login()">Login</button>
+            <button class="btn-ghost" onclick="showAdminLogin()">Login Admin</button>
+          </div>
+          <div id="loginError" class="muted" style="margin-top:10px;"></div>
+        </section>
+
+        <section id="adminLoginPage" class="page">
+          <h2>Login Admin</h2>
+          <input id="adminUser" type="text" placeholder="Username admin" />
+          <input id="adminPass" type="password" placeholder="Password admin" />
+          <div class="row" style="margin-top:8px;">
+            <button onclick="adminDoLogin()">Masuk Admin</button>
+            <button class="btn-ghost" onclick="switchPage('loginPage')">Batal</button>
+          </div>
+          <div id="adminLoginError" class="muted" style="margin-top:10px;"></div>
+        </section>
+
+        <section id="votingPage" class="page">
+          <h2>Pilih Ketua & Wakil OSIS</h2>
+          <p class="muted">Periksa visi & misi. Pilih satu kandidat saja.</p>
+          <div id="candidateList"></div>
+          <div style="margin-top:10px;"><button class="btn-ghost" onclick="logout()">Keluar</button></div>
+        </section>
+
+        <section id="thankyouPage" class="page">
+          <h2>Terima kasih!</h2>
+          <p>Suara Anda telah tersimpan. Tekan Keluar untuk kembali.</p>
+          <button onclick="logout()">Keluar</button>
+        </section>
+
+        <section id="adminPage" class="page">
+          <h2>Panel Admin</h2>
+          <div class="admin-controls">
+            <button onclick="showEditList()">Edit Kandidat</button>
+            <button onclick="resetAllVotes()">Reset Semua Vote</button>
+            <button onclick="openDashboard()">Lihat Dashboard</button>
+            <button class="btn-ghost" onclick="switchPage('loginPage')">Keluar Admin</button>
+          </div>
+
+          <div class="admin-panel">
+            <h3>📋 Daftar Pemilih</h3>
+            <div id="voteList" class="muted">Memuat...</div>
+          </div>
+
+          <div class="admin-panel">
+            <h3>📊 Statistik</h3>
+            <div id="statsBox" class="muted">Memuat...</div>
+          </div>
+        </section>
+
+        <section id="editListPage" class="page">
+          <h2>Edit Kandidat - Daftar</h2>
+          <p class="muted">Klik "Edit" untuk membuka halaman edit kandidat.</p>
+          <div id="editListContainer"></div>
+          <div style="margin-top:10px;">
+            <button onclick="addNewCandidate()">+ Tambah Kandidat</button>
+            <button class="btn-ghost" onclick="switchPage('adminPage')">Kembali</button>
+          </div>
+        </section>
+
+        <section id="editCandidatePage" class="page">
+          <h2>Edit Kandidat</h2>
+          <div style="max-width:820px;margin:auto;text-align:left;">
+            <label><strong>No. Urut</strong></label>
+            <input id="editId" type="text" disabled />
+            <label><strong>Nama Ketua</strong></label>
+            <input id="editKetua" type="text" />
+            <label><strong>Nama Wakil</strong></label>
+            <input id="editWakil" type="text" />
+            <label><strong>Visi</strong></label>
+            <textarea id="editVisi" placeholder="Tuliskan visi..."></textarea>
+            <label><strong>Misi (satu baris = 1 misi)</strong></label>
+            <textarea id="editMisi" placeholder="Tuliskan misi satu per baris..."></textarea>
+            <label><strong>Foto Kandidat</strong></label><br/>
+            <input id="editFoto" class="file-input" type="file" accept="image/*" />
+            <div style="margin-top:8px;">
+              <img id="previewFoto" src="" alt="Preview foto" style="width:220px;height:140px;object-fit:cover;border-radius:8px;display:none;" />
+            </div>
+            <div style="margin-top:12px;">
+              <button onclick="saveEditedCandidate()">Simpan Perubahan</button>
+              <button class="btn-ghost" onclick="switchPage('editListPage')">Batal</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="dashboardPage" class="page">
+          <h2>Dashboard Real-Time</h2>
+          <div class="chart-wrap">
+            <canvas id="voteChart" width="900" height="380"></canvas>
+          </div>
+          <div style="margin-top:12px;">
+            <button onclick="closeDashboard()">Tutup Dashboard</button>
+            <button class="btn-ghost" onclick="openFullscreen()">Fullscreen</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+<script>
+
+let candidates = JSON.parse(localStorage.getItem('candidates')) || [
+  { id:1, ketua:'Ahmad Santoso', wakil:'Budi Rahman', visi:'Membangun OSIS yang Aktif, Kreatif, Berintegritas.', misi:['Meningkatkan partisipasi siswa','Mengembangkan ekstrakurikuler','Menumbuhkan budaya disiplin'], foto:'paslon1.jpg' },
+  { id:2, ketua:'Citra Dewi', wakil:'Dedi Pratama', visi:'Menjadikan OSIS Wadah Pengembangan Potensi & Karakter Siswa.', misi:['Pelatihan kepemimpinan','Kegiatan sosial & lingkungan','Keterbukaan aspirasi siswa'], foto:'paslon2.jpg' },
+  { id:3, ketua:'Eka Putri', wakil:'Faisal Ahmad', visi:'Mewujudkan OSIS Modern, Responsif, dan Berprestasi.', misi:['Sistem informasi OSIS','Lomba inovasi siswa','Program mentoring prestasi'], foto:'paslon3.jpg' }
+];
+
+const ADMIN_USER = 'admin', ADMIN_PASS='231026', STUDENT_PASS='261023';
+let currentUser = '';
+let dashboardChart = null;
+let dashboardTimer = null;
+
+function saveCandidates(){ localStorage.setItem('candidates', JSON.stringify(candidates)); }
+function getVotes(){ return JSON.parse(localStorage.getItem('votes') || '[]'); }
+function saveVotes(v){ localStorage.setItem('votes', JSON.stringify(v)); }
+
+function switchPage(showId){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  if(showId) document.getElementById(showId).classList.add('active');
+}
+
+function login(){
+  const nama = document.getElementById('nama').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const err = document.getElementById('loginError');
+  err.textContent = '';
+  if(!nama || !pass){ err.textContent = 'Nama & password harus diisi'; return; }
+  if(pass !== STUDENT_PASS){ err.textContent = 'Password salah'; return; }
+  const votes = getVotes();
+  if(votes.some(v=>v.nama.toLowerCase()===nama.toLowerCase())){ err.textContent = 'Anda sudah memilih sebelumnya.'; return; }
+  currentUser = nama;
+  renderCandidateListForUser();
+  switchPage('votingPage');
+}
+
+function renderCandidateListForUser(){
+  const el = document.getElementById('candidateList');
+  el.innerHTML = candidates.map(c=>{
+    return `
+      <article class="candidate" role="article">
+        <img src="${c.foto}" alt="Foto ${escapeHtml(c.ketua)}" />
+        <div class="cand-body">
+          <div class="cand-title">${escapeHtml(c.ketua)} & ${escapeHtml(c.wakil)}</div>
+          <div class="cand-vision"><strong>Visi:</strong> ${escapeHtml(c.visi)}</div>
+          <div>
+            <strong>Misi:</strong>
+            <ul class="cand-mission">
+              ${c.misi.map(m=>`<li>${escapeHtml(m)}</li>`).join('')}
+            </ul>
+          </div>
+          <div style="margin-top:10px;">
+            <button onclick="confirmVote(${c.id})">Pilih Kandidat ${c.id}</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function confirmVote(id){
+  if(!currentUser) return alert('Sesi tidak ditemukan. Silakan login ulang.');
+  if(!confirm('Pastikan pilihan Anda sudah benar. Konfirmasi memilih kandidat ini?')) return;
+  const votes = getVotes();
+  votes.push({ nama: currentUser, kandidat: id, waktu: new Date().toISOString() });
+  saveVotes(votes);
+  switchPage('thankyouPage');
+}
+
+function showAdminLogin(){ switchPage('adminLoginPage'); }
+
+function adminDoLogin(){
+  const u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value.trim();
+  const err = document.getElementById('adminLoginError'); err.textContent = '';
+  if(u !== ADMIN_USER || p !== ADMIN_PASS){ err.textContent = 'Username / password admin salah'; return; }
+  prepareAdminPanel();
+  switchPage('adminPage');
+}
+
+function prepareAdminPanel(){
+  updateVoteList();
+  showStats();
+}
+
+function updateVoteList(){
+  const votes = getVotes();
+  const el = document.getElementById('voteList');
+  if(!votes.length){ el.innerHTML = '<div class="muted">Belum ada yang memilih.</div>'; return; }
+  el.innerHTML = votes.map(v=>`
+    <div style="padding:8px 0;border-bottom:1px dashed #ececec;">
+      <strong>${escapeHtml(v.nama)}</strong> → Kandidat ${v.kandidat}
+      <div class="small">${new Date(v.waktu).toLocaleString('id-ID')}</div>
+      <div style="margin-top:6px;">
+        <button class="btn-ghost" onclick="deleteVote('${escapeJs(v.nama)}')">Hapus Suara</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteVote(nama){
+  if(!confirm('Hapus suara untuk: '+nama+' ?')) return;
+  let votes = getVotes();
+  votes = votes.filter(v=>v.nama.toLowerCase() !== nama.toLowerCase());
+  saveVotes(votes);
+  updateVoteList(); showStats(); if(dashboardChart) drawDashboardChart();
+}
+
+function resetAllVotes(){
+  if(!confirm('Yakin reset semua suara? (tidak bisa dikembalikan)')) return;
+  localStorage.removeItem('votes');
+  updateVoteList(); showStats(); if(dashboardChart) drawDashboardChart();
+  alert('Semua suara telah dihapus.');
+}
+
+function showStats(){
+  const votes = getVotes();
+  const total = votes.length;
+  const el = document.getElementById('statsBox');
+  if(total === 0){ el.innerHTML = '<div class="muted">Belum ada suara untuk ditampilkan.</div>'; return; }
+  el.innerHTML = candidates.map(c=>{
+    const count = votes.filter(v=>v.kandidat === c.id).length;
+    const percent = total ? ((count/total)*100).toFixed(1) : 0;
+    return `<div style="margin-bottom:10px;"><strong>${escapeHtml(c.ketua)} & ${escapeHtml(c.wakil)}</strong>
+      <div class="small">${count} suara — ${percent}%</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${percent}%;"><span style="padding-right:8px;">${percent}%</span></div></div>
+    </div>`;
+  }).join('');
+}
+
+function showEditList(){
+  const container = document.getElementById('editListContainer');
+  container.innerHTML = candidates.map(c=>`
+    <div class="candidate" style="align-items:center;">
+      <img src="${c.foto}" alt="Foto ${escapeHtml(c.ketua)}" />
+      <div class="cand-body">
+        <div class="cand-title">${escapeHtml(c.ketua)} & ${escapeHtml(c.wakil)}</div>
+        <div class="small">Visi: ${escapeHtml(truncate(c.visi,120))}</div>
+        <div style="margin-top:8px;">
+          <button onclick="openEditCandidate(${c.id})">Edit</button>
+          <button class="btn-ghost" onclick="deleteCandidate(${c.id})">Hapus Kandidat</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  switchPage('editListPage');
+}
+
+function openEditCandidate(id){
+  const cand = candidates.find(x=>x.id === id);
+  if(!cand) return alert('Kandidat tidak ditemukan');
+  document.getElementById('editId').value = cand.id;
+  document.getElementById('editKetua').value = cand.ketua;
+  document.getElementById('editWakil').value = cand.wakil;
+  document.getElementById('editVisi').value = cand.visi;
+  document.getElementById('editMisi').value = cand.misi.join('\n');
+  document.getElementById('previewFoto').src = cand.foto || '';
+  document.getElementById('previewFoto').style.display = cand.foto ? 'block' : 'none';
+  document.getElementById('editFoto').value = '';
+  switchPage('editCandidatePage');
+}
+
+function saveEditedCandidate(){
+  const id = Number(document.getElementById('editId').value);
+  const ketua = document.getElementById('editKetua').value.trim();
+  const wakil = document.getElementById('editWakil').value.trim();
+  const visi = document.getElementById('editVisi').value.trim();
+  const misiTxt = document.getElementById('editMisi').value.trim();
+  const fileInput = document.getElementById('editFoto');
+  if(!ketua || !wakil){ alert('Nama ketua & wakil harus diisi'); return; }
+  const idx = candidates.findIndex(c=>c.id === id);
+  if(idx === -1) return alert('Kandidat tidak ditemukan');
+  candidates[idx].ketua = ketua;
+  candidates[idx].wakil = wakil;
+  candidates[idx].visi = visi;
+  candidates[idx].misi = misiTxt ? misiTxt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean) : [];
+  const file = fileInput.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      candidates[idx].foto = e.target.result;
+      saveCandidates();
+      alert('Perubahan kandidat tersimpan.');
+      switchPage('editListPage'); showEditList(); renderCandidateListForUser(); showStats(); if(dashboardChart) drawDashboardChart();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    saveCandidates();
+    alert('Perubahan kandidat tersimpan.');
+    switchPage('editListPage'); showEditList(); renderCandidateListForUser(); showStats(); if(dashboardChart) drawDashboardChart();
+  }
+}
+
+function addNewCandidate(){
+  const newId = candidates.length ? Math.max(...candidates.map(c=>c.id)) + 1 : 1;
+  candidates.push({ id:newId, ketua:'Nama Ketua', wakil:'Nama Wakil', visi:'Visi singkat...', misi:['Misi 1','Misi 2'], foto:'paslon1.jpg' });
+  saveCandidates();
+  showEditList();
+}
+function deleteCandidate(id){
+  if(!confirm('Hapus kandidat ini?')) return;
+  candidates = candidates.filter(c=>c.id !== id);
+  saveCandidates();
+  showEditList();
+  renderCandidateListForUser();
+  showStats();
+  if(dashboardChart) drawDashboardChart();
+}
+function openDashboard(){
+  switchPage('dashboardPage');
+  drawDashboardChart();
+  if(dashboardTimer) clearInterval(dashboardTimer);
+  dashboardTimer = setInterval(drawDashboardChart, 5000);
+}
+function closeDashboard(){
+  switchPage('adminPage');
+  if(dashboardTimer) { clearInterval(dashboardTimer); dashboardTimer = null; }
+}
+function drawDashboardChart(){
+  const votes = getVotes();
+  const total = votes.length;
+  const labels = candidates.map(c => `${c.ketua} & ${c.wakil}`);
+  const data = candidates.map(c => votes.filter(v=>v.kandidat === c.id).length);
+  const ctx = document.getElementById('voteChart').getContext('2d');
+  if(dashboardChart) dashboardChart.destroy();
+  dashboardChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Jumlah Suara',
+        data: data,
+        backgroundColor: candidates.map((c,i)=> (i%2? 'rgba(211,47,47,0.9)':'rgba(13,71,161,0.9)')),
+        borderColor: candidates.map((c,i)=> (i%2? 'rgba(211,47,47,1)':'rgba(13,71,161,1)')),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: `Total Suara: ${total}`, font: { size: 18 } },
+        legend: { display: false }
+      },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+}
+
+function logout(){ currentUser=''; switchPage('loginPage'); document.getElementById('password').value=''; document.getElementById('nama').value=''; }
+function openFullscreen(){
+  const el = document.documentElement;
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if(el.msRequestFullscreen) el.msRequestFullscreen();
+}
+function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>"']/g, s=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s]); }
+function truncate(str,n){ return str && str.length>n? str.slice(0,n-1)+'…' : (str||''); }
+function escapeJs(s){ return String(s).replace(/'/g,"\\'"); }
+
+if(!localStorage.getItem('candidates')) saveCandidates();
+renderCandidateListForUser();
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible'){ if(document.getElementById('adminPage').classList.contains('active')){ updateVoteList(); showStats(); } } });
+</script>
+</body>
+</html>
